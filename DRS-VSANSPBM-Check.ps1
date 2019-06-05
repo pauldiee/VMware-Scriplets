@@ -12,9 +12,9 @@ Requirements:		Powershell Framework 5.1
 Script used to add vm's that are part of a VSAN Storage Policy to a DRS VM Group.
 #>
 
-$vcenter = "" #Fill in name of vCenter
+$vcenter = "inf-vcar-0-01" #Fill in name of vCenter
 
-Connect-VIServer $vcenter -Force
+Connect-VIServer $vcenter -Force | Out-Null
 
 #Clear all variables
 $DC1VMs = ""
@@ -38,13 +38,23 @@ $addtogroupdc2 = (Compare-Object -ReferenceObject $MER2SHOULDRUNVMs -DifferenceO
 
 #Add VM's not in DRS VM Group to DRS VM Group
 foreach ($vmdc1 in $addtogroupdc1){
-    Get-DrsClusterGroup -Name "Should Run MER 1" | Set-DrsClusterGroup -VM $vmdc1 -Add
+    Get-DrsClusterGroup -Name "Should Run MER 1" | Set-DrsClusterGroup -VM $vmdc1 -Add | Out-Null
     Write-Host added $vmdc1 to DRS Group "Should Run MER 1" -ForegroundColor Green
 }
+#Check if DRS VM Group is ready
+if (!$addtogroupdc1){
+    Write-Host MER1 DRS VM Group is up to date -ForegroundColor Cyan
+}
 
+#Add VM's not in DRS VM Group to DRS VM Group
 foreach ($vmdc2 in $addtogroupdc2){
-    Get-DrsClusterGroup -Name "Should Run MER 2" | Set-DrsClusterGroup -VM $vmdc2 -Add
+    Get-DrsClusterGroup -Name "Should Run MER 2" | Set-DrsClusterGroup -VM $vmdc2 -Add | Out-Null
     Write-Host added $vmdc2 to DRS Group "Should Run MER 2" -ForegroundColor Green
 }
 
+#Check if DRS VM Group is ready
+if (!$addtogroupdc2){
+    Write-Host MER2 DRS VM Group is up to date -ForegroundColor Cyan
+}
+Disconnect-VIServer * -Force -Confirm:$false
 #END OF SCRIPT
