@@ -1,21 +1,50 @@
+<#
+=============================================================================================================
+Script:    		    DRS-VSANSPBM.ps1
+Date:      		    June, 2019
+Create By:          Paul van Dieën
+Last Edited by:	    Paul van Dieën
+Last Edited Date:   05-06-2019
+Requirements:		Powershell Framework 5.1
+                    PowerCLI 11.2
+=============================================================================================================
+.DESCRIPTION
+Script used to add vm's that are part of a VSAN Storage Policy to a DRS VM Group.
+#>
 
-
-$vcenter = ""
+$vcenter = "" #Fill in name of vCenter
 
 Connect-VIServer $vcenter -Force
 
+#Clear all variables
 $DC1VMs = ""
 $DC2VMs = ""
+$MER1SHOULDRUNVMs = ""
+$MER2SHOULDRUNVMs = ""
+$addtogroupdc1 = ""
+$addtogroupdc2 = ""
+
+#Get VM's with specific Storage Policies
 $DC1VMs = (Get-SpbmStoragePolicy -Name "CC|Resources – Geen DC Failover – RAID5 – DC1" | Get-VM | Sort-Object Name)
 $DC2VMs = (Get-SpbmStoragePolicy -Name "CC|Resources – Geen DC Failover – RAID5 – DC2" | Get-VM | Sort-Object Name)
 
-$MER1SHOULDRUNVMs = ""
-$MER2SHOULDRUNVMs = ""
+#Get VM's currently in DRS VM Groups
 $MER1SHOULDRUNVMs = (Get-DrsClusterGroup -Name "Should Run MER 1" | Select-Object -ExpandProperty Member)
 $MER2SHOULDRUNVMs = (Get-DrsClusterGroup -Name "Should Run MER 2" | Select-Object -ExpandProperty Member)
 
-$addtogroupdc1 = (Compare-Object -ReferenceObject $MER1SHOULDRUNVMs -DifferenceObject $DC1VMs | Where-Object {$_.SideIndicator -eq "=>"})
-$addtogroupdc1 = (Compare-Object -ReferenceObject $MER2SHOULDRUNVMs -DifferenceObject $DC2VMs | Where-Object {$_.SideIndicator -eq "=>"})
+#Compare VM's from Storage Policies to currently in DRS VM Group and return difference
+$addtogroupdc1 = (Compare-Object -ReferenceObject $MER1SHOULDRUNVMs -DifferenceObject $DC1VMs -PassThru | Where-Object {$_.SideIndicator -eq "=>"} | % {$_.Name})
+$addtogroupdc2 = (Compare-Object -ReferenceObject $MER2SHOULDRUNVMs -DifferenceObject $DC2VMs -PassThru | Where-Object {$_.SideIndicator -eq "=>"} | % {$_.Name})
 
-Get-DrsClusterGroup -Name "Should Run MER 1" | Set-DrsClusterGroup -VM $addtogroupdc1 -Add
-Get-DrsClusterGroup -Name "Should Run MER 2" | Set-DrsClusterGroup -VM $addtogroupdc2 -Add
+#Add VM's not in DRS VM Group to DRS VM Group
+foreach ($vmdc1 in $addtogroupdc1){
+    Get-DrsClusterGroup -Name "Should Run MER 2" | Set-DrsClusterGroup -VM $vmdc1 -Add
+    Write-Host added $vmdc1 to DRS Group "Should Run MER 1" -ForegroundColor Green
+}
+
+foreach ($vmdc2 in $addtogroupdc2){
+    Get-DrsClusterGroup -Name "Should Run MER 2" | Set-DrsClusterGroup -VM $vmdc2 -Add
+    Write-Host added $vmdc2 to DRS Group "Should Run MER 2" -ForegroundColor Green
+}
+
+#END OF SCRIPT
