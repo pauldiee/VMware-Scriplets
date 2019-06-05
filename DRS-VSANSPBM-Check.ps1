@@ -12,7 +12,7 @@ Requirements:		Powershell Framework 5.1
 Script used to add vm's that are part of a VSAN Storage Policy to a DRS VM Group.
 #>
 
-$vcenter = "inf-vcar-0-01" #Fill in name of vCenter
+$vcenter = "" #Fill in name of vCenter
 
 Connect-VIServer $vcenter -Force | Out-Null
 
