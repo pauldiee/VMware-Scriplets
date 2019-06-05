@@ -38,7 +38,7 @@ $addtogroupdc2 = (Compare-Object -ReferenceObject $MER2SHOULDRUNVMs -DifferenceO
 
 #Add VM's not in DRS VM Group to DRS VM Group
 foreach ($vmdc1 in $addtogroupdc1){
-    Get-DrsClusterGroup -Name "Should Run MER 2" | Set-DrsClusterGroup -VM $vmdc1 -Add
+    Get-DrsClusterGroup -Name "Should Run MER 1" | Set-DrsClusterGroup -VM $vmdc1 -Add
     Write-Host added $vmdc1 to DRS Group "Should Run MER 1" -ForegroundColor Green
 }
 
