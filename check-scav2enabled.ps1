@@ -1,4 +1,5 @@
 $vcenter = Read-Host "Enter vCenter FQDN here"
+Disconnect-VIServer * -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Connect-VIServer $vcenter -Force | Out-Null
 #Check if SCAv2 enabled
 $allhosts = (Get-Cluster | Get-VMHost)
@@ -14,4 +15,4 @@ foreach ($esxhost in $allhosts){
         Write-Host HT Mitigation NOT enabled -ForegroundColor Cyan
     }
 }
-Disconnect-VIServer * -Force -Confirm:$false
+Disconnect-VIServer * -Force -Confirm:$false | Out-Null
