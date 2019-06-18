@@ -15,7 +15,7 @@ foreach ($esxhost in $allhosts){
             Write-Host SCAv2 is NOT enabled on $esxhost -ForegroundColor Cyan
         }
     } else{
-        Write-Host HT Mitigation NOT enabled -ForegroundColor Cyan
+        Write-Host HT Mitigation NOT enabled on $esxhost -ForegroundColor Cyan
     }
 }
 Disconnect-VIServer * -Force -Confirm:$false | Out-Null
