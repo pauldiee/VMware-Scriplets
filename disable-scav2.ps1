@@ -1,7 +1,10 @@
+$ErrorActionPreference = "SilentlyContinue"
+Disconnect-VIServer * -Force -Confirm:$false | Out-Null
+$ErrorActionPreference = "Continue"
 $vcenter = Read-Host "Enter vCenter FQDN here"
-Disconnect-VIServer * -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Connect-VIServer $vcenter -Force | Out-Null
-#Check if SCAv2 enabled
+
+#Disable SCAv2
 $allhosts = (Get-Cluster | Get-VMHost)
 foreach ($esxhost in $allhosts){
     if (Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigation |Where-Object {$_.Value -eq $true}){
