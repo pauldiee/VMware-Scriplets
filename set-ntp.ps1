@@ -1,9 +1,9 @@
-$ErrorActionPreference = "SilentlyContinue"
-Disconnect-VIServer * -Force -Confirm:$false | Out-Null
-$ErrorActionPreference = "Continue"
+Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false | Out-Null
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
 $vcenter = Read-Host "enter vcenter name"
-Connect-VIServer $vcenter".fqdn" -force
+$domain = Read-Host "Enter local domain"
 $ntphost = Read-Host "enter ntp hostname or ip"
+Connect-VIServer $vcenter"."$domain -Force -ErrorAction Stop | Out-Null
 
 #Configure NTP server
 $allhosts = (Get-Cluster | Get-VMHost | Sort-Object Name)
@@ -20,4 +20,4 @@ foreach ($esx in $allhosts){
         Write-Host Done setting up NTP on $esx -ForegroundColor Green
     }
 }
-Disconnect-VIServer -Force -Confirm:$false
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}

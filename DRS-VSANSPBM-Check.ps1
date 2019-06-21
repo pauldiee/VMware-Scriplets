@@ -12,11 +12,13 @@ Requirements:		Powershell Framework 5.1
 Script used to add vm's that are part of a VSAN Storage Policy to a DRS VM Group.
 #>
 
-$vcenter = "" #Fill in name of vCenter
+Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false | Out-Null
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
+$vcenter = Read-Host "enter vcenter name"
+$domain = Read-Host "Enter local domain"
+Connect-VIServer $vcenter"."$domain -Force -ErrorAction Stop | Out-Null
 
-Connect-VIServer $vcenter -Force | Out-Null
-
-#Clear all variables
+#Initialize variables
 $DC1VMs = ""
 $DC2VMs = ""
 $MER1SHOULDRUNVMs = ""
@@ -56,5 +58,5 @@ foreach ($vmdc2 in $addtogroupdc2){
 if (!$addtogroupdc2){
     Write-Host MER2 DRS VM Group is up to date -ForegroundColor Cyan
 }
-Disconnect-VIServer * -Force -Confirm:$false
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
 #END OF SCRIPT

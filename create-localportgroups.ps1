@@ -1,8 +1,8 @@
-$ErrorActionPreference = "SilentlyContinue"
-Disconnect-VIServer * -Force -Confirm:$false | Out-Null
-$ErrorActionPreference = "Continue"
+Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false | Out-Null
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
 $vcenter = Read-Host "enter vcenter name"
-Connect-VIServer $vcenter".fqdn" -force
+$domain = Read-Host "Enter local domain"
+Connect-VIServer $vcenter"."$domain -Force -ErrorAction Stop | Out-Null
 
 $portgroups = @{}
 $portgroups.Add('Prod-VDI-1','784')
@@ -32,4 +32,4 @@ foreach ($portgroup in $portgroups.Keys){
         }
     }
 }
-Disconnect-VIServer * -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}

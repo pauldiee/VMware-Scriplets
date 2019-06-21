@@ -1,8 +1,8 @@
-$ErrorActionPreference = "SilentlyContinue"
-Disconnect-VIServer * -Force -Confirm:$false | Out-Null
-$ErrorActionPreference = "Continue"
-$vcenter = Read-Host "Enter vCenter FQDN here"
-Connect-VIServer $vcenter -Force | Out-Null
+Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false | Out-Null
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
+$vcenter = Read-Host "enter vcenter name"
+$domain = Read-Host "Enter local domain"
+Connect-VIServer $vcenter"."$domain -Force -ErrorAction Stop | Out-Null
 
 #Enable SCAv2
 $allhosts = (Get-Cluster | Get-VMHost)
@@ -20,4 +20,4 @@ foreach ($esxhost in $allhosts){
         Write-Host Enabled HT Mitigation on $esxhost -ForegroundColor Green
     }
 }
-Disconnect-VIServer * -Force -Confirm:$false
+if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
