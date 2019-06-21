@@ -1,4 +1,27 @@
 Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false | Out-Null
+
+#checking Virten modules
+write-host "Checking Virten Modules" -NoNewline
+if (!(get-module -Name Virten.* -ListAvailable)) {
+    write-host -ForegroundColor red " - Virten Module not found!"
+} else {
+    write-host -ForegroundColor Yellow " - done"
+    write-host -foregroundcolor Yellow "Using Virten version: $(Get-Module -Name Virten.* -ListAvailable | Select-Object -ExpandProperty Version)"
+}
+
+#checking PowerCLI modules
+write-host "Checking PowerCLI modules" -NoNewline
+if (!(get-module -Name VMware.* -ListAvailable)) {
+    write-host -ForegroundColor red " - PowerCLI module not loaded, loading PowerCLI module"
+    if (!(get-module -Name VMware.* -ListAvailable | Import-Module -ErrorAction SilentlyContinue)) {  
+        # Error out if loading fails  
+        Write-Error "ERROR: Cannot load the VMware Module. Is PowerCLI installed?"  
+     }  
+} else {
+    write-host -ForegroundColor Yellow " - done"
+    write-host -foregroundcolor Yellow "Using PowerCLI version: $(Get-Module -Name VMware.PowerCLI -ListAvailable | Select-Object -ExpandProperty Version)"
+}
+
 if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
 $vcenter = Read-Host "enter vcenter name"
 $domain = Read-Host "Enter local domain"
