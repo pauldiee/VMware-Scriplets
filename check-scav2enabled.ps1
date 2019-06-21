@@ -3,7 +3,11 @@ Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false |
 #checking Virten modules
 write-host "Checking Virten Modules" -NoNewline
 if (!(get-module -Name Virten.* -ListAvailable)) {
-    write-host -ForegroundColor red " - Virten Module not found!"
+    write-host -ForegroundColor red " - Virten Module not loaded, loading Virten module"
+    if (!(get-module -Name Virten.* -ListAvailable | Import-Module -ErrorAction SilentlyContinue)) {  
+        # Error out if loading fails  
+        Write-Error "ERROR: Cannot load the Virten Module. Is it installed?"
+     }
 } else {
     write-host -ForegroundColor Yellow " - done"
     write-host -foregroundcolor Yellow "Using Virten version: $(Get-Module -Name Virten.* -ListAvailable | Select-Object -ExpandProperty Version)"
@@ -15,7 +19,7 @@ if (!(get-module -Name VMware.* -ListAvailable)) {
     write-host -ForegroundColor red " - PowerCLI module not loaded, loading PowerCLI module"
     if (!(get-module -Name VMware.* -ListAvailable | Import-Module -ErrorAction SilentlyContinue)) {  
         # Error out if loading fails  
-        Write-Error "ERROR: Cannot load the VMware Module. Is PowerCLI installed?"  
+        Write-Error "ERROR: Cannot load the VMware Module. Is PowerCLI installed?"
      }  
 } else {
     write-host -ForegroundColor Yellow " - done"
