@@ -40,30 +40,25 @@ Write-host -ForegroundColor Green "Connected to vCenter server: $($global:Defaul
 $allhosts = (Get-Cluster | Get-VMHost)
 foreach ($esxhost in $allhosts){
     if (Get-VMHost $esxhost | Get-VMHostVersion | Where-Object {$_.UpdateRelease -eq "ESXi 6.7 U2"}){
-        if (Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigation |Where-Object {$_.Value -eq $true}){
-            Write-Host HT Mitigation is enabled on $esxhost -ForegroundColor Green
-        } else{
-            Write-Host HT Mitigation is NOT enabled on $esxhost -ForegroundColor Cyan
-        }
         if (Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigationIntraVM |Where-Object {$_.Value -eq $false}){
             Write-Host SCAv2 is enabled on $esxhost -ForegroundColor Green
-            $continue1 = Read-Host "Do you want to disable SCAv2 Mitigation? (y/n)"
+            $continue1 = Read-Host "Do you want to disable SCAv2 Mitigation on $esxhost? (y/n)"
             if ($continue1 -eq "y"){
                 Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigationIntraVM | Set-AdvancedSetting -Value $true -Confirm:$false | Out-Null
                 Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigation | Set-AdvancedSetting -Value $false -Confirm:$false | Out-Null
                 Write-Host Disabled SCAv2 on $esxhost! Please REBOOT $esxhost! -ForegroundColor Green
             }else{
-                Write-Host Done nothing to current settings -ForegroundColor Cyan
+                Write-Host Done nothing to current settings on $esxhost -ForegroundColor Cyan
             }
         } else{
             Write-Host SCAv2 is NOT enabled on $esxhost -ForegroundColor Cyan
-            $continue2 = Read-Host "Do you want to enable SCAv2 Mitigation? (y/n)"
+            $continue2 = Read-Host "Do you want to enable SCAv2 Mitigation on $esxhost? (y/n)"
             if ($continue2 -eq "y"){
                 Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigationIntraVM | Set-AdvancedSetting -Value $false -Confirm:$false | Out-Null
                 Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigation | Set-AdvancedSetting -Value $true -Confirm:$false | Out-Null
                 Write-Host Enabled SCAv2 on $esxhost! Please REBOOT $esxhost! -ForegroundColor Green
             }else{
-                Write-Host Done nothing to current settings -ForegroundColor Cyan
+                Write-Host Done nothing to current settings on $esxhost -ForegroundColor Cyan
             }
         }
     }else {
