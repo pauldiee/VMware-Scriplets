@@ -1,3 +1,17 @@
+<#
+=============================================================================================================
+Script:    		    scav2-check.ps1
+Date:      		    June, 2019
+Create By:          Paul van Dieën
+Last Edited by:	    Paul van Dieën
+Last Edited Date:   23-06-2019
+Requirements:		Powershell Framework 5.1
+                    PowerCLI 11.3
+=============================================================================================================
+.DESCRIPTION
+Script used to check SCAv2 settings and enable or disable them.
+#>
+
 #checking Virten modules
 Write-Host "Checking Virten Modules" -BackgroundColor Yellow -ForegroundColor Black
 if (!(get-module -Name Virten.net.VimAutomation -ListAvailable)){    
@@ -26,6 +40,7 @@ if (!(get-module -Name VMware.PowerCLI* -ListAvailable)){
     Write-Host -ForegroundColor Yellow "Using PowerCLI version: $(Get-Module -Name VMware.PowerCLI* -ListAvailable | Select-Object -ExpandProperty Version)"
 }
 
+#Connect to vCenter
 Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $true -Confirm:$false | Out-Null
 if ($global:DefaultVIServers.Count -gt 0) {Disconnect-VIServer * -Confirm:$false}
 Write-Host -BackgroundColor Yellow -ForegroundColor Black "Please fill in all information for vCenter Connection!"
