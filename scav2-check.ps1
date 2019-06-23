@@ -15,13 +15,9 @@ Script used to check SCAv2 settings and enable or disable them.
 #checking Virten modules
 Write-Host "Checking Virten Modules" -BackgroundColor Yellow -ForegroundColor Black
 if (!(get-module -Name Virten.net.VimAutomation -ListAvailable)){    
-    if((Test-Connection -ComputerName 'www.microsoft.com' -Quiet)){
-        Write-Host -ForegroundColor Cyan "Virten Module not Installed, Installing it to Current User"
-        Find-Module -Name Virten.net.VimAutomation | Install-Module -Scope CurrentUser -Force | Out-Null
-        Write-Host -foregroundcolor Yellow "Installed Virten version: $(Get-Module -Name Virten.* -ListAvailable | Select-Object -ExpandProperty Version)"
-    } else {
-        Write-Error "ERROR: Cannot connect to Powershell Gallery" -ErrorAction Stop
-    }
+    Write-Host -ForegroundColor Cyan "Virten Module not Installed, Installing it to Current User"
+    Find-Module -Name Virten.net.VimAutomation | Install-Module -Scope CurrentUser -Force | Out-Null
+    Write-Host -foregroundcolor Yellow "Installed Virten version: $(Get-Module -Name Virten.* -ListAvailable | Select-Object -ExpandProperty Version)"
 }else {
     Write-Host -foregroundcolor Yellow "Using Virten version: $(Get-Module -Name Virten.* -ListAvailable | Select-Object -ExpandProperty Version)"
 }
@@ -29,13 +25,9 @@ if (!(get-module -Name Virten.net.VimAutomation -ListAvailable)){
 #checking PowerCLI modules
 Write-Host "Checking PowerCLI modules" -BackgroundColor Yellow -ForegroundColor Black
 if (!(get-module -Name VMware.PowerCLI* -ListAvailable)){
-    if((Test-Connection -ComputerName 'www.microsoft.com' -Quiet)){
-        Write-Host -ForegroundColor Cyan "PowerCLI Module not Installed. Installing it to Current User"
-        Find-Module -Name VMware.PowerCLI* | Install-Module -Scope CurrentUser -AllowClobber -Force | Out-Null
-        Write-Host -ForegroundColor Yellow "Installed PowerCLI version: $(Get-Module -Name VMware.PowerCLI* -ListAvailable | Select-Object -ExpandProperty Version)"
-    } else {
-        Write-Error "ERROR: Cannot connect to Powershell Gallery" -ErrorAction Stop
-    }  
+    Write-Host -ForegroundColor Cyan "PowerCLI Module not Installed. Installing it to Current User"
+    Find-Module -Name VMware.PowerCLI* | Install-Module -Scope CurrentUser -AllowClobber -Force | Out-Null
+    Write-Host -ForegroundColor Yellow "Installed PowerCLI version: $(Get-Module -Name VMware.PowerCLI* -ListAvailable | Select-Object -ExpandProperty Version)"
 }else {
     Write-Host -ForegroundColor Yellow "Using PowerCLI version: $(Get-Module -Name VMware.PowerCLI* -ListAvailable | Select-Object -ExpandProperty Version)"
 }
