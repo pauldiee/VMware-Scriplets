@@ -42,8 +42,11 @@ $vCenterCredential = Get-Credential
 Connect-VIServer $vcenter -Credential $vCenterCredential -Force -ErrorAction Stop | Out-Null
 Write-host -ForegroundColor Green "Connected to vCenter server: $($global:DefaultVIServer.Name)"
 
+#Select Cluster
+$cluster =  get-cluster | Sort-Object | Select-Object -ExpandProperty Name | Out-GridView -Title "Select Cluster to check" -OutputMode Single
+
 #Check if SCAv2 is enabled
-$allhosts = (Get-Cluster | Get-VMHost | Sort-Object Name)
+$allhosts = (Get-Cluster $cluster | Get-VMHost | Sort-Object Name)
 foreach ($esxhost in $allhosts){
     if ((Get-VMHost $esxhost |Where-Object {$_.ConnectionState -eq "Maintenance" -or "Connected"})){
         if (Get-VMHost $esxhost | Get-VMHostVersion | Where-Object {$_.UpdateRelease -eq "ESXi 6.7 U2"}){
