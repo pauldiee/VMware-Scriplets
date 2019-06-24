@@ -45,7 +45,7 @@ Write-host -ForegroundColor Green "Connected to vCenter server: $($global:Defaul
 #Check if SCAv2 is enabled
 $allhosts = (Get-Cluster | Get-VMHost | Sort-Object Name)
 foreach ($esxhost in $allhosts){
-    if ((Get-VMHost $esxhost |Where-Object {$_.ConnectionState -eq "Connected"})){
+    if (!(Get-VMHost $esxhost |Where-Object {$_.ConnectionState -eq "Maintenance"})){
         if (Get-VMHost $esxhost | Get-VMHostVersion | Where-Object {$_.UpdateRelease -eq "ESXi 6.7 U2"}){
             if (Get-VMHost $esxhost | Get-AdvancedSetting VMkernel.Boot.hyperthreadingMitigationIntraVM |Where-Object {$_.Value -eq $false}){
                 Write-Host SCAv2 is enabled on $esxhost -ForegroundColor Green
