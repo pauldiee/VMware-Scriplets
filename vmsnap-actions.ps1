@@ -30,4 +30,4 @@ foreach ($vm in $vmtosnapaction){
 
 # Close connection to active vCenter
 Disconnect-VIServer $vCenter -Confirm:$false
-	Write-Host 'Connection closed to' $vCenter
+Write-Host 'Connection closed to' $vCenter
