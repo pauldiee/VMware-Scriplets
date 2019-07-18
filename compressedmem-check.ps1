@@ -5,7 +5,7 @@ $vCenter = Read-Host -prompt 'Enter FQDN / IP address of vCenter'
 Write-Host 'vCenter:' $vCenter ''
 
 # Connect to vCenter with $vCenter variable value
-Connect-VIServer -Server $vCenter -Credential (Get-Credential) -Force
+Connect-VIServer -Server $vCenter -Credential (Get-Credential) -Force -ErrorAction Stop
 
 #Create report vm's with compressed mem
 $report = @()
