@@ -26,7 +26,7 @@ $output = $Report | Sort-Object -Property Compressed | Where-Object {$_.Compress
 #Report aanmaken en wegschrijven voor logging
 $Report = $output | Select VMName,Compressed | ConvertTo-Html -Head $Header -Property VMName,Compressed -PreContent "<p><h2>VM Compressed Memory Report - $($vcenter)</h2></p><br>"
 $reportname = "$($vcenter)-compressedmemvm.html"
-$Report | Out-File "\$($reportname)"
+$Report | Out-File ".\$($reportname)"
 
 # Close connection to active vCenter
 Disconnect-VIServer $vCenter -Confirm:$false
