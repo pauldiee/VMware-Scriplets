@@ -21,7 +21,7 @@ foreach($vm in Get-View -ViewType Virtualmachine){
     $Report += $vms
 }
 
-$output = $Report | Sort-Object -Property Compressed | Where-Object {$_.Compressed -ne "0"}
+$output = $Report | Sort-Object -Property VMName | Where-Object {$_.Compressed -ne "0"}
 
 #Report aanmaken en wegschrijven voor logging
 $Report = $output | Select VMName,Compressed | ConvertTo-Html -Head $Header -Property VMName,Compressed -PreContent "<p><h2>VM Compressed Memory Report - $($vcenter)</h2></p><br>"
